@@ -1,0 +1,28 @@
+#
+# This is a sample docker compose file to bring up a perforce stack
+#
+server:
+  build: server
+  restart: always
+  environment:
+    - "P4PORT=1666"
+    - "CASE_INSENSITIVE=1"
+    - "ENABLE_AUTOCHECKPOINTS=1"
+  volumes:
+    - "/mnt/datavolumes/perforce-server/data:/data"
+    - "/mnt/datavolumes/perforce-server/library:/library"
+  ports:
+    - "1666:1666"
+
+# gf:
+#    image: ambakshi/perforce-git-fusion
+#    restart: always
+#    environment:
+#      - "P4PORT=p4-server:1666"
+#      - "P4USER=p4admin"
+#    ports:
+#      - "2222:22"
+#    volumes:
+#      - "/mnt/datavolumes/git-fusion:/data"
+#    links:
+#      - p4-server
