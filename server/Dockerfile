@@ -26,7 +26,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Environment configurations
 ENV NAME=p4depot P4CONFIG=.p4config P4ROOT=/data/p4depot P4PORT=1666 P4USER=p4admin
 ENV CASE_INSENSITIVE=1
-ENV ENABLE_AUTOCHECKPOINTS=0
+ENV ENABLE_AUTOCHECKPOINTS=1
 
 # Data is where the depot database goes
 # Library is where the library files for perforce goes. Symlinks at boot will set this up.

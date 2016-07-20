@@ -45,6 +45,11 @@ if [ -n "$WARN" ]; then
     echo -e "\n***** WARNING: USING DEFAULT PASSWORD ******\n"
 fi
 
+IPADDRESSES=`hostname -I`
+echo "IP Addresses: $IPADDRESSES"
+echo -n "Primary address: "
+ifconfig `ip route | grep default | head -1 | sed 's/\(.*dev \)\([a-z0-9]*\)\(.*\)/\2/g'` | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | head -1
+
 if [ -f $P4ROOT/.initialized ]; then
 	exit 0
 fi
