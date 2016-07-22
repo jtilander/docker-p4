@@ -54,37 +54,76 @@ if [ -f $P4ROOT/.initialized ]; then
 	exit 0
 fi
 
+# Create a link to the depot library files so that we can separate db and library files onto
+# different volumes.
+ln -s ../../library/depot $P4ROOT/depot
+mkdir -p $P4ROOT/../../library/depot
+
 NAME="${NAME:-$HOSTNAME}"
 
-export P4PASSWD=$P4PASSWD
-export P4USER=$P4USER
-export P4PORT=$P4PORT
+/opt/perforce/sbin/configure-helix-p4d.sh $NAME -n -p $P4PORT -r $P4ROOT -u $P4USER -P $P4PASSWD --case $CASE_INSENSITIVE
+p4dctl start -t p4d $NAME
 
-echo "Initialize server with default tables and users."
-echo NAME: $NAME
-echo P4PORT: $P4PORT
-echo P4USER: $P4USER
-echo P4ROOT: $P4ROOT
+P4TICKET=`echo "$P4PASSWD"|/usr/bin/p4 login -a -p|sed -r -e "s/Enter password://g"`
+echo $P4TICKET
+P4="/usr/bin/p4 -u $P4USER -p $P4PORT -P $P4TICKET"
 
-touch ~perforce/.p4config
-chmod 0600 ~perforce/.p4config
-chown perforce:perforce ~perforce/.p4config
+$P4 configure show
 
-cat > ~perforce/.p4config <<EOF
-P4USER=$P4USER
-P4PORT=$P4PORT
-P4PASSWD="$P4PASSWD"
-EOF
+$P4 user -i < /root/p4-users.txt
+$P4 group -i < /root/p4-groups.txt
+$P4 group -i < /root/p4-admins.txt
+$P4 protect -i < /root/p4-protect.txt
 
-cd ~perforce
+if [ ! -z "$LDAPSERVER" ]; then
+    cat /root/p4-ldap.txt | sed -r -e "s/LDAPNAME/$LDAPNAME/g" | sed -r -e "s/LDAPSERVER/$LDAPSERVER/g" | $P4 ldap -i
+    $P4 configure set auth.ldap.order.1=$LDAPNAME
+    $P4 configure set auth.default.method=ldap
+    #$P4 configure set auth.ldap.userautocreate=1
+fi
 
-/opt/perforce/sbin/configure-helix-p4d.sh $NAME -n -p $P4PORT -r $P4ROOT -u $P4USER -P "${P4PASSWD}" --case $CASE_INSENSITIVE
+# Enable by default "p4 monitor" command
+$P4 configure set monitor=2
 
-p4 info
+# Increase the default buffer sizes
+$P4 configure set net.tcpsize=524288
+$P4 configure set filesys.bufsize=524288
 
-echo "$P4PASSWD"|p4 login
+# By default set the max parallel syncs to 5
+$P4 configure set net.parallel.max=5
 
-p4 info
+$P4 configure set net.parallel.submit.threads=8
+$P4 configure set net.parallel.submit.min=9
+$P4 configure set net.parallel.submit.batch=8
+
+#If non-zero, disable the sending of TCP keepalive packets.
+#$P4 configure set net.keepalive.disable=0
+
+#Idle time (in seconds) before starting to send keepalives.
+#$P4 configure set net.keepalive.idle=0
+
+#Interval (in seconds) between sending keepalive packets.
+#$P4 configure set net.keepalive.interval=0
+
+#Number of unacknowledged keepalives before failure.
+#$P4 configure set net.keepalive.count=0
+
+# Setup readonly client support
+mkdir -p $P4ROOT/ro
+$P4 configure set client.readonly.dir=$P4ROOT/ro
+
+# Buffer size for read/write operations to server's archive of versioned files.
+$P4 configure set lbr.bufsize=64k
+
+# Only superusers can create users
+$P4 configure set dm.user.noautocreate=3
+
+# Improving concurrency with lockless reads
+$P4 configure set db.peeking=2
+#$P4 configure set server.locks.sync=1
+
+# Ensure that we have a .p4tickets file if someone wants to debug the server itself.
+echo $P4PASSWD|$P4 login
 
 p4dctl stop -t p4d $NAME
 

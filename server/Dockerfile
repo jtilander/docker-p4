@@ -18,6 +18,7 @@ RUN echo 'deb http://package.perforce.com/apt/ubuntu trusty release' > /etc/apt/
 RUN apt-get update
 
 RUN apt-cache policy helix-p4d
+
 RUN apt-get install -yq --no-install-recommends -q helix-cli helix-p4d=$P4D_VERSION helix-p4dctl
 
 # Cleanup APT when we are done.
@@ -27,12 +28,16 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ENV NAME=p4depot P4CONFIG=.p4config P4ROOT=/data/p4depot P4PORT=1666 P4USER=p4admin
 ENV CASE_INSENSITIVE=1
 ENV ENABLE_AUTOCHECKPOINTS=1
+ENV LDAPSERVER=
+ENV LDAPNAME=simple
 
 # Data is where the depot database goes
 # Library is where the library files for perforce goes. Symlinks at boot will set this up.
 VOLUME /data
 VOLUME /library
 EXPOSE 1666
+
+ADD ./p4-*.txt /root/
 
 # Add the daily checkpoint backup cron job to the mix.
 ADD ./perforce-checkpoint.?? /usr/local/bin/

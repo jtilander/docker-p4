@@ -8,6 +8,7 @@ server:
     - "P4PORT=1666"
     - "CASE_INSENSITIVE=1"
     - "ENABLE_AUTOCHECKPOINTS=1"
+    - "LDAPSERVER=${LDAPSERVER}"
   volumes:
     - "/mnt/datavolumes/perforce-server/data:/data"
     - "/mnt/datavolumes/perforce-server/library:/library"
