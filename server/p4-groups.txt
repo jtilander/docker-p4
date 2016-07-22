@@ -36,7 +36,7 @@ MaxScanRows:	unset
 
 MaxLockTime:	unset
 
-Timeout:	43200
+Timeout:	86400
 
 PasswordTimeout:	unset
 
