@@ -25,15 +25,15 @@ image:
 
 serverup: networkup
 	docker run -d --name p4-server --hostname p4server --net=perforce0 --ip 172.28.0.200 \
-	-e "P4PASSWD=${P4PASSWD}"\
-	-e "LDAPNAME=${LDAPNAME}"\
-	-e "LDAPSERVER=${LDAPSERVER}"\
-	-e "LDAPBINDUSER=${LDAPBINDUSER}"\
-	-e "LDAPBINDPASSWD=${LDAPBINDPASSWD}"\
-	-e "LDAPSEARCHBASE=${LDAPSEARCHBASE}"\
-	-p 1666:1666\
-	-v /mnt/datavolumes/perforce-server/data:/data\
-	-v /mnt/datavolumes/perforce-server/library:/library\
+	-e "P4PASSWD=${P4PASSWD}" \
+	-e "LDAPNAME=${LDAPNAME}" \
+	-e "LDAPSERVER=${LDAPSERVER}" \
+	-e "LDAPBINDUSER=${LDAPBINDUSER}" \
+	-e "LDAPBINDPASSWD=${LDAPBINDPASSWD}" \
+	-e "LDAPSEARCHBASE=${LDAPSEARCHBASE}" \
+	-p 1666:1666 \
+	-v /mnt/datavolumes/perforce-server/data:/data \
+	-v /mnt/datavolumes/perforce-server/library:/library \
 	jtilander/p4-server && docker logs -f p4-server
 
 serverdown:
