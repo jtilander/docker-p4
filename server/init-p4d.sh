@@ -51,7 +51,17 @@ echo -n "Primary address: "
 ifconfig `ip route | grep default | head -1 | sed 's/\(.*dev \)\([a-z0-9]*\)\(.*\)/\2/g'` | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | head -1
 
 if [ -f $P4ROOT/.initialized ]; then
-	exit 0
+    p4dctl start -t p4d $NAME
+    
+    # Ensure that we have a .p4tickets file if someone wants to debug the server itself.
+    echo $P4PASSWD|/usr/bin/p4 -u $P4USER -p $P4PORT login
+
+    # Show the configuration for the server.
+    /usr/bin/p4 -u $P4USER -p $P4PORT info 
+
+    p4dctl stop -t p4d $NAME
+    
+    exit 0
 fi
 
 # Create a link to the depot library files so that we can separate db and library files onto
