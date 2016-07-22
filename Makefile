@@ -20,12 +20,11 @@ log:
 
 
 
-
 image:
 	docker build -t $(DOCKER_REPO)/p4-server server
 
 serverup: networkup
-	docker run -d --name p4-server --hostname p4server --net=perforce0 --ip 172.28.0.200 -p 1666:1666 -v /mnt/datavolumes/perforce-server/data:/data -v /mnt/datavolumes/perforce-server/library:/library jtilander/p4-server && docker log -f p4-server
+	docker run -d --name p4-server --hostname p4server --net=perforce0 --ip 172.28.0.200 -e "LDAPSERVER=${LDAPSERVER}" -p 1666:1666 -v /mnt/datavolumes/perforce-server/data:/data -v /mnt/datavolumes/perforce-server/library:/library jtilander/p4-server && docker log -f p4-server
 
 serverdown:
 	docker stop p4-server
@@ -37,6 +36,3 @@ networkdown:
 	docker network rm perforce0
 
 neat: serverdown networkdown
-
-push:
-	docker push $(DOCKER_REPO)/p4-server
