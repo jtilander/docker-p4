@@ -61,9 +61,9 @@
 #
 # Use 'p4 help ldap' to see more about ldap specification.
 
-Name: LDAPNAME
+Name: $LDAPNAME
 
-Host: LDAPSERVER
+Host: $LDAPSERVER
 
 Port: 389
 
@@ -71,8 +71,12 @@ Encryption: tls
 
 BindMethod: sasl
 
-Options: nodowncase nogetattrs norealminusername
+Options: nodowncase getattrs norealminusername
 
 SearchScope: subtree
 
 GroupSearchScope: subtree
+
+AttributeName: %givenName% %sN%
+
+AttributeEmail: mail

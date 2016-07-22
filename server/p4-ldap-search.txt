@@ -1,0 +1,92 @@
+# A Perforce Ldap Configuration Specification.
+#
+#  Name:          The LDAP configuration name.
+#  Host:          The FQDN of the directory server.
+#  Port:          The port number on which to connect to the directory server.
+#  Encryption:    The encryption method to use when connecting to the
+#                 directory server. Options are: 'none', 'ssl' and 'tls'.
+#  BindMethod:    The bind method to use with this directory. Options are:
+#                 'simple', 'search' and 'sasl'.
+#  Options:       LDAP Options:
+#                     [no]downcase [no]getattrs [no]realminusername
+#
+#  The following field only applies to the 'simple' bind method.
+#
+#  SimplePattern: This is the DN which will be used to bind against to
+#                 validate the user's credentials. The %user% placeholder
+#                 will be replaced with the user's userId.
+#
+#  The following fields only apply to the 'search' bind method; however they
+#  may also be used by 'p4 ldapsync' and for user creation with 'p4 login'.
+#
+#  SearchBaseDN:  The DN from which to start the search for the user object.
+#  SearchFilter:  The LDAP query filter to use to identify the user object
+#                 which will be used to bind against. The %user% placeholder
+#                 will be replaced with the user's userId.
+#  SearchScope:   The scope to use when searching for the user records.
+#                 Options are:
+#                         baseonly - Just the BaseDN object
+#                         children - The BaseDN and its direct children
+#                         subtree - The BaseDN and all objects below it
+#  SearchBindDN:  The DN to bind against in order to search the directory.
+#  SearchPasswd:  The password for the BindDN record.
+#
+#  The following field only applies to the 'sasl' bind method.
+#
+#  SaslRealm: The optional realm to use when authenticating the user via SASL.
+#
+#  The following fields are related to group membership within the directory.
+#
+#  The following fields are related to group membership within the directory.
+#  Set 'GroupSearchFilter' if users must belong to a specific group within
+#  the directory. The remaining two fields may also be used by 'p4 ldapsync'.
+#  GroupBaseDN:       The search base for performing the group search. If unset
+#                     this will default to the SearchBaseDN.
+#  GroupSearchScope:  The scope to use when performing the group search.
+#                     Options are:
+#                             baseonly - Just the BaseDN object
+#                             children - The BaseDN and its direct children
+#                             subtree - The BaseDN and all objects below it
+#
+#  The following fields are used to populate new user specifications created
+#  with 'p4 login' when the 'auth.ldap.userautocreate' configurable is set
+#  to to 1 and the 'getattrs' option is enabled.
+#
+#  AttributeUid:      The name of the attribute in the directory's user
+#                     records that contain the users' UIDs.
+#  AttributeName:     The name(s) of the attribute(s) in the directory's user
+#                     records that contain the users' full names.
+#  AttributeEmail:    The name of the attribute in the directory's user
+#                     records that contain the users' email addresses.
+#
+# Use 'p4 help ldap' to see more about ldap specification.
+
+Name: $LDAPNAME
+
+Host: $LDAPSERVER
+
+Port:   389
+
+Encryption:     tls
+
+BindMethod:     search
+
+Options:        downcase getattrs norealminusername
+
+SearchBaseDN:   $LDAPSEARCHBASE
+
+SearchFilter:   (uid=%user%)
+
+SearchScope:    subtree
+
+SearchBindDN:   $LDAPBINDUSER
+
+SearchPasswd:   $LDAPBINDPASSWD
+
+GroupSearchScope: subtree
+
+AttributeUid:   sAMAccountName
+
+AttributeName:  %givenName% %sN%
+
+AttributeEmail: mail

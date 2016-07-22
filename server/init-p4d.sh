@@ -86,10 +86,19 @@ $P4 group -i < /root/p4-admins.txt
 $P4 protect -i < /root/p4-protect.txt
 
 if [ ! -z "$LDAPSERVER" ]; then
-    cat /root/p4-ldap.txt | sed -r -e "s/LDAPNAME/$LDAPNAME/g" | sed -r -e "s/LDAPSERVER/$LDAPSERVER/g" | $P4 ldap -i
+
+    # http://answers.perforce.com/articles/KB/2590
+    # http://answers.perforce.com/articles/KB/14994
+
+    cat /root/p4-ldap-$LDAPNAME.txt | envsubst | $P4 ldap -i
+
+    $P4 ldap -o $LDAPNAME
+
     $P4 configure set auth.ldap.order.1=$LDAPNAME
     $P4 configure set auth.default.method=ldap
-    #$P4 configure set auth.ldap.userautocreate=1
+    
+    # You still have to add the user manually to the protection table for them to be able to login.
+    $P4 configure set auth.ldap.userautocreate=1
 fi
 
 # Enable by default "p4 monitor" command
@@ -125,7 +134,7 @@ $P4 configure set client.readonly.dir=$P4ROOT/ro
 # Buffer size for read/write operations to server's archive of versioned files.
 $P4 configure set lbr.bufsize=64k
 
-# Only superusers can create users
+# Explicit user command creates user.
 $P4 configure set dm.user.noautocreate=3
 
 # Improving concurrency with lockless reads

@@ -10,7 +10,7 @@ CMD ["/sbin/my_init"]
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
-RUN apt-get install -yq --no-install-recommends -q wget python
+RUN apt-get install -yq --no-install-recommends -q wget python gettext-base
 
 # Add official perforce packages
 RUN wget -qO - https://package.perforce.com/perforce.pubkey | apt-key add -
@@ -29,7 +29,10 @@ ENV NAME=p4depot P4CONFIG=.p4config P4ROOT=/data/p4depot P4PORT=1666 P4USER=p4ad
 ENV CASE_INSENSITIVE=1
 ENV ENABLE_AUTOCHECKPOINTS=1
 ENV LDAPSERVER=
-ENV LDAPNAME=simple
+ENV LDAPNAME=search
+ENV LDAPBINDUSER=
+ENV LDAPBINDPASSWD=
+ENV LDAPSEARCHBASE=
 
 # Data is where the depot database goes
 # Library is where the library files for perforce goes. Symlinks at boot will set this up.
