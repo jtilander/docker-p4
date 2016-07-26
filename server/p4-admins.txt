@@ -46,3 +46,4 @@ Owners:
 
 Users:
 	p4admin
+	git-fusion-user

@@ -34,6 +34,7 @@ To just build the images, simply type:
 |LDAPBINDUSER |              |search requires a username                     |
 |LDAPBINDPASSWD|             |search requires a password                     |
 |LDAPSEARCHBASE|             |where in the ldap tree to search               |
+|USE_GIT_FUSION|1            |Configure git fusion if this is an initial install|
 
 
 

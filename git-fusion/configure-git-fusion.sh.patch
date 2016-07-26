@@ -1,0 +1,12 @@
+--- configure-git-fusion.sh.orig	2016-07-22 08:47:18.000000000 -0700
++++ configure-git-fusion.sh	2016-07-26 08:34:34.000000000 -0700
+@@ -884,7 +884,8 @@
+ case-handling policy to 'sensitive'.
+ 
+ EOT
+-        promptfor INSTALL_CASE_INSENSITIVE "Do you wish to continue the GF installation? [yes/no]" "no" false validate_yesno
++        #promptfor INSTALL_CASE_INSENSITIVE "Do you wish to continue the GF installation? [yes/no]" "no" false validate_yesno
++        INSTALL_CASE_INSENSITIVE=yes
+         if [ "$INSTALL_CASE_INSENSITIVE" != 'yes' -a  "$INSTALL_CASE_INSENSITIVE" != 'Yes' ]; then
+             echo "p4d on $P4PORT is not set to 'sensitive'."
+             echo "Stopping Git Fusion installation."

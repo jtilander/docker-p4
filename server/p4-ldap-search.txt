@@ -67,26 +67,32 @@ Host: $LDAPSERVER
 
 Port:   389
 
-Encryption:     tls
+Encryption:         tls
 
-BindMethod:     search
+BindMethod:         search
 
-Options:        downcase getattrs norealminusername
+Options:            downcase getattrs norealminusername
 
-SearchBaseDN:   $LDAPSEARCHBASE
+SearchBaseDN:       $LDAPSEARCHBASE
 
-SearchFilter:   (uid=%user%)
+SearchFilter:       (&(objectClass=user)(sAMAccountName=%user%))
 
-SearchScope:    subtree
+SearchScope:        subtree
 
-SearchBindDN:   $LDAPBINDUSER
+SearchBindDN:       $LDAPBINDUSER
 
-SearchPasswd:   $LDAPBINDPASSWD
+SearchPasswd:       $LDAPBINDPASSWD
 
-GroupSearchScope: subtree
+GroupBaseDN:        $LDAPSEARCHBASE
 
-AttributeUid:   sAMAccountName
+#GroupSearchFilter:  (&(objectClass=user) (sAMAccountName=%user%) (memberOf:1.2.840.113556.1.4.1941:=$LDAPGROUPFILTER))
 
-AttributeName:  %givenName% %sN%
+GroupSearchScope:   subtree
 
-AttributeEmail: mail
+GroupSearchScope:   subtree
+
+AttributeUid:       sAMAccountName
+
+AttributeName:      %givenName% %sN%
+
+AttributeEmail:     mail

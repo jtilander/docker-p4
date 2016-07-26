@@ -19,7 +19,7 @@ RUN apt-get update
 
 RUN apt-cache policy helix-p4d
 
-RUN apt-get install -yq --no-install-recommends -q helix-cli helix-p4d=$P4D_VERSION helix-p4dctl
+RUN apt-get install -yq --no-install-recommends -q helix-cli helix-p4d=$P4D_VERSION helix-p4dctl helix-git-fusion-trigger
 
 # Cleanup APT when we are done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -33,6 +33,7 @@ ENV LDAPNAME=search
 ENV LDAPBINDUSER=
 ENV LDAPBINDPASSWD=
 ENV LDAPSEARCHBASE=
+ENV USE_GIT_FUSION=1
 
 # Data is where the depot database goes
 # Library is where the library files for perforce goes. Symlinks at boot will set this up.

@@ -18,15 +18,15 @@ server:
   ports:
     - "1666:1666"
 
-# gf:
-#    image: ambakshi/perforce-git-fusion
-#    restart: always
-#    environment:
-#      - "P4PORT=p4-server:1666"
-#      - "P4USER=p4admin"
-#    ports:
-#      - "2222:22"
-#    volumes:
-#      - "/mnt/datavolumes/git-fusion:/data"
-#    links:
-#      - p4-server
+fusion:
+   build: git-fusion
+   restart: always
+   environment:
+     - "P4PORT=server:1666"
+     - "P4USER=p4admin"
+   ports:
+     - "2222:22"
+   volumes:
+     - "/mnt/datavolumes/git-fusion:/data"
+   links:
+     - server

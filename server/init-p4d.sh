@@ -56,6 +56,17 @@ if [ -f $P4ROOT/.initialized ]; then
     # Ensure that we have a .p4tickets file if someone wants to debug the server itself.
     echo $P4PASSWD|/usr/bin/p4 -u $P4USER -p $P4PORT login
 
+    # Install git-fusion trigger support, but only the second time we initialize
+    if [ "$USE_GIT_FUSION" -eq "1" ]; then
+        if [ ! -f $P4ROOT/.gf-triggers-initialized ]; then
+            python3 /opt/perforce/git-fusion/libexec/p4gf_submit_trigger.py --install $P4PORT $P4USER $P4PASSWD
+            touch $P4ROOT/.gf-triggers-initialized
+        fi
+        
+        # Ensure that the git user can login.
+        echo $P4PASSWD|/usr/bin/p4 -u git-fusion-user -p $P4PORT login
+    fi
+
     # Show the configuration for the server.
     /usr/bin/p4 -u $P4USER -p $P4PORT info 
 
@@ -101,6 +112,8 @@ if [ ! -z "$LDAPSERVER" ]; then
     $P4 configure set auth.ldap.userautocreate=1
 fi
 
+$P4 configure set security=1
+
 # Enable by default "p4 monitor" command
 $P4 configure set monitor=2
 
@@ -108,8 +121,8 @@ $P4 configure set monitor=2
 $P4 configure set net.tcpsize=524288
 $P4 configure set filesys.bufsize=524288
 
-# By default set the max parallel syncs to 5
-$P4 configure set net.parallel.max=5
+# By default set the max parallel syncs
+$P4 configure set net.parallel.max=10
 
 $P4 configure set net.parallel.submit.threads=8
 $P4 configure set net.parallel.submit.min=9
@@ -140,6 +153,10 @@ $P4 configure set dm.user.noautocreate=3
 # Improving concurrency with lockless reads
 $P4 configure set db.peeking=2
 #$P4 configure set server.locks.sync=1
+
+$P4 configure set triggers.io=0
+
+$P4 configure set security=3
 
 # Ensure that we have a .p4tickets file if someone wants to debug the server itself.
 echo $P4PASSWD|$P4 login
