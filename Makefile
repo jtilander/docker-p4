@@ -46,4 +46,13 @@ networkup:
 networkdown:
 	docker network rm perforce0
 
+fusionup: networkup
+	docker run -d --name p4-git --hostname p4git --net=perforce0 --ip 172.28.0.201 \
+        -e "P4PASSWD=${P4PASSWD}" \
+        -e "P4PORT=${P4PORT}" \
+        -p 2222:22 \
+        -v /mnt/datavolumes/perforce-git:/data \
+        jtilander/p4-git-fusion && docker logs -f p4-git
+
+
 neat: serverdown networkdown
