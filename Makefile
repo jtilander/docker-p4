@@ -31,6 +31,7 @@ serverup: networkup
 	-e "LDAPBINDUSER=${LDAPBINDUSER}" \
 	-e "LDAPBINDPASSWD=${LDAPBINDPASSWD}" \
 	-e "LDAPSEARCHBASE=${LDAPSEARCHBASE}" \
+	-e "USE_GIT_FUSION=${USE_GIT_FUSION}" \
 	-p 1666:1666 \
 	-v /mnt/datavolumes/perforce-server/data:/data \
 	-v /mnt/datavolumes/perforce-server/library:/library \
