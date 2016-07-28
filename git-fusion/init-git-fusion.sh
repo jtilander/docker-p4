@@ -53,6 +53,14 @@ if [ -e $P4ROOT/.initialized-fusion ]; then
         sed -i 's!git:.*!git:$6$rFdhmMms$6dFyhSzxA5RTkfiBV3uC2W/hrV9UmRdLk7vPF9E8wqgJvykVZsFfDUmOedCVX28WeK9GWJzIRsaYOz5AgDWjO/:17009::::::!' /etc/shadow
     fi
 
+
+    # Restore the tickets since the perforce server might have changed.
+    # TODO: Figure out what the ticket format is really about?
+    su - git bash -c "echo $P4PASSWD|p4 -p $P4PORT -u git-fusion-user login"
+    su - git bash -c "echo $P4PASSWD|p4 -p $P4PORT -u git-fusion-reviews-$NAME login"
+    su - git bash -c "echo $P4PASSWD|p4 -p $P4PORT -u git-fusion-reviews--all-$NAME login"
+    su - git bash -c "echo $P4PASSWD|p4 -p $P4PORT -u git-fusion-reviews--non-$NAME login"
+ 
     exit 0
 fi
 
