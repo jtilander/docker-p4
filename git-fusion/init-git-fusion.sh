@@ -87,6 +87,8 @@ echo yes|/opt/perforce/git-fusion/libexec/configure-git-fusion.sh -n \
     --id $NAME \
     --unknownuser unknown
 
+rm /etc/cron.d/perforce-git-fusion
+
 cat > /opt/perforce/git-fusion/home/perforce-git-fusion/.perforce-env <<EOF
 export P4USER=$P4USER
 export P4PASSWD=$P4PASSWD
