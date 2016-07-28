@@ -89,8 +89,6 @@ GroupBaseDN:        $LDAPSEARCHBASE
 
 GroupSearchScope:   subtree
 
-GroupSearchScope:   subtree
-
 AttributeUid:       sAMAccountName
 
 AttributeName:      %givenName% %sN%
