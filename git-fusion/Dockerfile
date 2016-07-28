@@ -44,7 +44,9 @@ ADD init-git-fusion.sh /etc/my_init.d/git-fusion.sh
 
 RUN rm -f /etc/service/sshd/down
 
-RUN echo -en "* * * * * git bash -l -c p4gf_auth_update_authorized_keys.py\n\n" > /etc/cron.d/perforce-git-fusion
+ADD sync-keys.sh /usr/local/bin/
+RUN echo "* * * * * git bash -l -c /usr/local/bin/sync-keys.sh" > /etc/cron.d/perforce-git-fusion-sync-keys
+RUN echo "" >> /etc/cron.d/perforce-git-fusion-sync-keys
 
 RUN mv /etc/perforce /etc/perforce.orig
 RUN ln -s /data/etc/perforce /etc/perforce
