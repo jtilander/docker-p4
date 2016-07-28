@@ -5,13 +5,11 @@ set -e
 #
 # Copy standard configuration files over to the volume
 #
-if [ ! -d /data/etc ]; then
-	echo First time installation, copying configuration from /etc/perforce to /data/etc and relinking
-	mkdir -p /data/etc
-	cp -r /etc/perforce/* /data/etc/
+if [ ! -d /data/etc/perforce ]; then
+	echo First time installation, copying configuration from /etc/perforce to /data/etc/perforce and relinking
+	mkdir -p /data/etc/perforce
+	cp -r /etc/perforce.orig/* /data/etc/perforce/
 fi 
-mv /etc/perforce /etc/perforce.orig
-ln -s /data/etc /etc/perforce
 
 #
 # Optionally enable taking checkpoints each day
@@ -55,17 +53,6 @@ if [ -f $P4ROOT/.initialized ]; then
     
     # Ensure that we have a .p4tickets file if someone wants to debug the server itself.
     echo $P4PASSWD|/usr/bin/p4 -u $P4USER -p $P4PORT login
-
-    # Install git-fusion trigger support, but only the second time we initialize
-    if [ "$USE_GIT_FUSION" -eq "1" ]; then
-        if [ ! -f $P4ROOT/.gf-triggers-initialized ]; then
-            python3 /opt/perforce/git-fusion/libexec/p4gf_submit_trigger.py --install $P4PORT $P4USER $P4PASSWD
-            touch $P4ROOT/.gf-triggers-initialized
-        fi
-        
-        # Ensure that the git user can login.
-        echo $P4PASSWD|/usr/bin/p4 -u git-fusion-user -p $P4PORT login
-    fi
 
     # Show the configuration for the server.
     /usr/bin/p4 -u $P4USER -p $P4PORT info 
@@ -157,6 +144,28 @@ $P4 configure set db.peeking=2
 $P4 configure set triggers.io=0
 
 $P4 configure set security=3
+
+
+# Install git-fusion trigger support, but make sure that we do this after the fusion server has initialized.
+if [ "$USE_GIT_FUSION" -eq "1" ]; then
+    echo "Waiting for the git fusion server to initialize..."
+    sleep 10
+    echo "Installing support for git fusion triggers"
+
+    if [ ! -d /data/gf-libexec ]; then
+        mv /opt/perforce/git-fusion/libexec_template /data/gf-libexec
+    fi
+
+    ln -s /data/gf-libexec /opt/perforce/git-fusion/libexec
+
+    if [ ! -f $P4ROOT/.gf-triggers-initialized ]; then
+        python3 /opt/perforce/git-fusion/libexec/p4gf_submit_trigger.py --install $P4PORT $P4USER $P4PASSWD
+        touch $P4ROOT/.gf-triggers-initialized
+    fi
+    
+    # Ensure that the git user can login.
+    echo $P4PASSWD|/usr/bin/p4 -u git-fusion-user -p $P4PORT login
+fi
 
 # Ensure that we have a .p4tickets file if someone wants to debug the server itself.
 echo $P4PASSWD|$P4 login

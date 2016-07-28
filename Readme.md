@@ -47,6 +47,19 @@ There are two volumes /data and /library that should be mounted to the host. /da
 Be sure to backup the directories that you mounted /data and /library on.
 
 
+## Perforce Git Fusion image
+
+### Environment variables
+
+|Name         |Default       |Notes                                          |
+|-------------|--------------|-----------------------------------------------|
+|NAME         |gf            |Name of the server, will be used as server id  |
+
+### Volumes
+
+There is a /data volume where all the data is redirected to.
+
+
 ## Contributing
 
 1. Fork it!

@@ -52,3 +52,9 @@ ADD init-p4d.sh /etc/my_init.d/p4d.sh
 
 RUN mkdir -p /etc/service/p4d
 ADD run-p4d.sh /etc/service/p4d/run
+
+RUN mv /etc/perforce /etc/perforce.orig
+RUN ln -s /data/etc/perforce /etc/perforce
+
+RUN mv /opt/perforce/git-fusion/libexec /opt/perforce/git-fusion/libexec_template
+

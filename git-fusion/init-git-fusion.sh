@@ -5,13 +5,11 @@ set -e
 #
 # Copy standard configuration files over to the volume
 #
-if [ ! -d /data/etc ]; then
-	echo First time installation, copying configuration from /etc/perforce to /data/etc and relinking
-	mkdir -p /data/etc
-	cp -r /etc/perforce/* /data/etc/
+if [ ! -d /data/etc/perforce ]; then
+	echo First time installation, copying configuration from /etc/perforce to /data/etc/perforce and relinking
+	mkdir -p /data/etc/perforce
+	cp -r /etc/perforce.orig/* /data/etc/perforce/
 fi 
-mv /etc/perforce /etc/perforce.orig
-ln -s /data/etc /etc/perforce
 
 if [ -z "$P4PASSWD" ]; then
     WARN=1
@@ -34,16 +32,12 @@ echo "IP Addresses: $IPADDRESSES"
 echo -n "Primary address: "
 ifconfig `ip route | grep default | head -1 | sed 's/\(.*dev \)\([a-z0-9]*\)\(.*\)/\2/g'` | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | head -1
 
-if [ ! -d /data/git-fusion ]; then
-    mkdir -p /data/git-fusion
-    cp -r /opt/perforce/git-fusion/home-template/* /data/git-fusion
+if [ ! -d /data/gf-home ]; then
+    mkdir -p /data/gf-home
+    mv /opt/perforce/git-fusion/home-template/* /data/gf-home/
 fi    
 
-if [ ! -L /opt/perforce/git-fusion/home ]; then
-    ln -s /data/git-fusion /opt/perforce/git-fusion/home
-fi
-
-if [ -f $P4ROOT/.initialized-fusion ]; then
+if [ -e $P4ROOT/.initialized-fusion ]; then
     # Restore the host keys
     cp -f /data/sshkeys/ssh_host* /etc/ssh/
 
@@ -54,7 +48,7 @@ if [ -f $P4ROOT/.initialized-fusion ]; then
     fi
 
     if ! grep git /etc/shadow > /dev/null; then
-        echo "git:!:17004::::::" >> /etc/shadow        
+        echo "git:$6$rFdhmMms$6dFyhSzxA5RTkfiBV3uC2W/hrV9UmRdLk7vPF9E8wqgJvykVZsFfDUmOedCVX28WeK9GWJzIRsaYOz5AgDWjO/:17009::::::" >> /etc/shadow
     fi
 
     exit 0
@@ -82,5 +76,13 @@ echo yes|/opt/perforce/git-fusion/libexec/configure-git-fusion.sh -n \
     --server remote \
     --id $NAME \
     --unknownuser unknown
+
+cat > /opt/perforce/git-fusion/home/perforce-git-fusion/.perforce-env <<EOF
+export P4USER=$P4USER
+export P4PASSWD=$P4PASSWD
+export P4PORT=$P4PORT
+EOF
+
+sed -i 's!git:.*!git:$6$rFdhmMms$6dFyhSzxA5RTkfiBV3uC2W/hrV9UmRdLk7vPF9E8wqgJvykVZsFfDUmOedCVX28WeK9GWJzIRsaYOz5AgDWjO/:17009::::::!' /etc/shadow
 
 touch $P4ROOT/.initialized-fusion

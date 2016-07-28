@@ -25,7 +25,7 @@ RUN apt-get install -yq --no-install-recommends -q helix-cli helix-git-fusion=$F
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Environment configurations
-ENV P4CONFIG=.p4config P4PORT=1666 P4USER=p4admin P4ROOT=/data
+ENV P4CONFIG=.p4config P4PORT=1666 P4USER=p4admin P4ROOT=/data NAME=gf
 
 VOLUME /data
 EXPOSE 22 1666
@@ -37,8 +37,19 @@ RUN patch -u /opt/perforce/git-fusion/libexec/configure-git-fusion.sh /opt/perfo
 # Prepare the home directory to be a template that we can move into /data/git-fusion-home and relink it
 # RUN mv /opt/perforce/git-fusion/home/perforce-git-fusion/p4gf_environment.cfg
 RUN mv /opt/perforce/git-fusion/home /opt/perforce/git-fusion/home-template
+RUN ln -s /data/gf-home /opt/perforce/git-fusion/home
 
 RUN mkdir -p /etc/my_init.d
 ADD init-git-fusion.sh /etc/my_init.d/git-fusion.sh
 
 RUN rm -f /etc/service/sshd/down
+
+ADD sync-keys.sh /usr/local/bin/
+RUN echo "* * * * * git bash -l -c /usr/local/bin/sync-keys.sh" > /etc/cron.d/perforce-git-fusion
+
+RUN mv /etc/perforce /etc/perforce.orig
+RUN ln -s /data/etc/perforce /etc/perforce
+
+# RUN sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
+# RUN sed -i 's@session\s*include\s*system-auth$@session optional system-auth@g' /etc/pam.d/su
+RUN sed -i 's@#PasswordAuthentication no@PasswordAuthentication no@' /etc/ssh/sshd_config
