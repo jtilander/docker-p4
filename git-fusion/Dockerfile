@@ -44,12 +44,9 @@ ADD init-git-fusion.sh /etc/my_init.d/git-fusion.sh
 
 RUN rm -f /etc/service/sshd/down
 
-ADD sync-keys.sh /usr/local/bin/
-RUN echo "* * * * * git bash -l -c /usr/local/bin/sync-keys.sh" > /etc/cron.d/perforce-git-fusion
+RUN echo -en "* * * * * git bash -l -c p4gf_auth_update_authorized_keys.py\n\n" > /etc/cron.d/perforce-git-fusion
 
 RUN mv /etc/perforce /etc/perforce.orig
 RUN ln -s /data/etc/perforce /etc/perforce
 
-# RUN sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
-# RUN sed -i 's@session\s*include\s*system-auth$@session optional system-auth@g' /etc/pam.d/su
 RUN sed -i 's@#PasswordAuthentication no@PasswordAuthentication no@' /etc/ssh/sshd_config

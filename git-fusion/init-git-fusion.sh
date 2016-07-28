@@ -49,6 +49,8 @@ if [ -e $P4ROOT/.initialized-fusion ]; then
 
     if ! grep git /etc/shadow > /dev/null; then
         echo "git:$6$rFdhmMms$6dFyhSzxA5RTkfiBV3uC2W/hrV9UmRdLk7vPF9E8wqgJvykVZsFfDUmOedCVX28WeK9GWJzIRsaYOz5AgDWjO/:17009::::::" >> /etc/shadow
+    else
+        sed -i 's!git:.*!git:$6$rFdhmMms$6dFyhSzxA5RTkfiBV3uC2W/hrV9UmRdLk7vPF9E8wqgJvykVZsFfDUmOedCVX28WeK9GWJzIRsaYOz5AgDWjO/:17009::::::!' /etc/shadow
     fi
 
     exit 0
