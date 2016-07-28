@@ -22,6 +22,7 @@ log:
 
 image:
 	docker build -t $(DOCKER_REPO)/p4-server server
+	docker build -t $(DOCKER_REPO)/p4-git-fusion git-fusion
 
 serverup: networkup
 	docker run -d --name p4-server --hostname p4server --net=perforce0 --ip 172.28.0.200 \
@@ -54,5 +55,7 @@ fusionup: networkup
         -v /mnt/datavolumes/perforce-git:/data \
         jtilander/p4-git-fusion && docker logs -f p4-git
 
+fusiondown:
+	docker stop p4-git && docker rm -f p4-git
 
 neat: serverdown networkdown
