@@ -4,6 +4,7 @@
 server:
   build: server
   restart: always
+  hostname: p4server
   environment:
     - "P4PORT=1666"
     - "CASE_INSENSITIVE=1"
@@ -21,6 +22,7 @@ server:
 fusion:
    build: git-fusion
    restart: always
+   hostname: p4git
    environment:
      - "P4PORT=server:1666"
      - "P4USER=p4admin"
