@@ -56,13 +56,36 @@ networkdown:
 
 fusionup: networkup
 	docker run -d --name p4-git --hostname p4git --net=perforce0 --ip 172.28.0.201 \
-        -e "P4PASSWD=${P4PASSWD}" \
-        -e "P4PORT=${P4PORT}" \
-        -p 2222:22 \
-        -v /mnt/datavolumes/perforce-git:/data \
-        jtilander/p4-git-fusion && docker logs -f p4-git
+		-e "P4PASSWD=${P4PASSWD}" \
+		-e "P4PORT=${P4PORT}" \
+		-p 2222:22 \
+		-v /mnt/datavolumes/perforce-git:/data \
+		jtilander/p4-git-fusion && docker logs -f p4-git
 
 fusiondown:
 	docker stop p4-git && docker rm -f p4-git
 
+proxyup: networkup
+	docker run -d --name p4-proxy --hostname p4proxy --net=perforce0 --ip 172.28.0.202 \
+		-e "P4PASSWD=${P4PASSWD}" \
+		-e "P4TARGET=${P4TARGET}" \
+		-e "P4CLIENT=${P4CLIENT}" \
+		-e "CACHE_MAX_SIZE_MB=${CACHE_MAX_SIZE_MB}" \
+		-e "CACHE_MAX_EMPTY_MB=${CACHE_MAX_EMPTY_MB}" \
+		-p 1667:1666 \
+		-v /mnt/datavolumes/perforce-proxy:/data \
+		jtilander/p4-proxy && docker logs -f p4-proxy
+
+proxydown:
+	docker stop p4-proxy && docker rm -f p4-proxy
+
 neat: serverdown networkdown
+
+
+
+# In case you have a mac and vmware and want to setup your initial environment
+provisionmac:
+	brew install docker
+	brew install docker-compose
+	-docker-machine rm -f dockervm
+	docker-machine create -d vmwarefusion --vmwarefusion-cpu-count 2 --vmwarefusion-memory-size 2048 dockervm

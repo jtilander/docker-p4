@@ -13,9 +13,9 @@ server:
     - "LDAPBINDUSER=${LDAPBINDUSER}"
     - "LDAPBINDPASSWD=${LDAPBINDPASSWD}"
     - "LDAPSEARCHBASE=${LDAPSEARCHBASE}"
-  # volumes:
-  #   - "/mnt/datavolumes/perforce-server/data:/data"
-  #   - "/mnt/datavolumes/perforce-server/library:/library"
+  volumes:
+    - "/mnt/datavolumes/perforce-server/data:/data"
+    - "/mnt/datavolumes/perforce-server/library:/library"
   ports:
     - "1666:1666"
 
@@ -28,8 +28,8 @@ fusion:
      - "P4USER=p4admin"
    ports:
      - "2222:22"
-   # volumes:
-   #   - "/mnt/datavolumes/git-fusion:/data"
+   volumes:
+     - "/mnt/datavolumes/git-fusion:/data"
    links:
      - server
 
@@ -44,6 +44,9 @@ proxy:
      - "P4CLIENT=proxy_populate_ws"
      - "CACHE_MAX_SIZE_MB=16"
      - "CACHE_MAX_EMPTY_MB=0"
-
+  ports:
+    - "1667:1666"
+  volumes:
+     - "/mnt/datavolumes/perforce-proxy:/data"
   links:
      - server
