@@ -60,6 +60,26 @@ Be sure to backup the directories that you mounted /data and /library on.
 There is a /data volume where all the data is redirected to.
 
 
+## Perforce Proxy image
+
+This brings up a perforce proxy server with automatic pruning of disk space as well as optionally preloading the cache at periodic times.
+
+### Environment variables
+
+|Name         |Default       |Notes                                          |
+|-------------|--------------|-----------------------------------------------|
+|P4TARGET     |perforce:1666 |The target server that will be cached          |
+|CACHE_MAX_SIZE_MB|1048576   |Max size of the cache                          |
+|CACHE_MAX_EMPTY_MB|51200    |If this amount of space is free already, skip prune|
+|P4USER       |p4admin       |Preload cache with this user                   |
+|P4PASSWD     |              |Preload cache with this password               |
+|P4CLIENT     |              |Preload cache with this client, must have host to * and client root at /data/client|
+
+### Volumes
+
+There is a /data volume where all the data is stored on.
+
+
 ## Contributing
 
 1. Fork it!
