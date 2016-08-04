@@ -1,3 +1,10 @@
+# You should set these environment variables in the parent
+# shell that you run, or these will simply be set to nothing.
+export LDAPSERVER ?= 
+export LDAPBINDUSER ?= 
+export LDAPBINDPASSWD ?= 
+export LDAPSEARCHBASE ?= 
+
 DOCKER_REPO ?= jtilander
 DC=docker-compose
 
@@ -15,7 +22,7 @@ up:
 	$(DC) up -d
 
 log:
-	$(DC) logs
+	$(DC) logs -f
 
 
 
