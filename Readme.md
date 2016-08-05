@@ -3,7 +3,7 @@
 Perforce docker images inspired by Amit's [docker images](https://github.com/ambakshi/docker-perforce). The base images have all been switched to [baseimage docker](https://github.com/phusion/baseimage-docker) for proper zombie process handling and cron usage. 
 
 
-These images are also available on (docker hub)[https://hub.docker.com/r/jtilander/]
+These images are also available on [docker hub](https://hub.docker.com/r/jtilander/)
 
 
 ## Usage
@@ -45,4 +45,4 @@ The docker compose file also uses external environment variables to configure it
 ## References
 
   * https://github.com/phusion/baseimage-docker
-  * 
+
