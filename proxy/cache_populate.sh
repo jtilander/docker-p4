@@ -18,7 +18,15 @@ set -e
 		exit 0
 	fi
 
+	EXTRA_ARGS=
+
+	if [ ! -z $PARALLEL_SYNC ]; then
+		EXTRA_ARGS="-q --parallel=$PARALLEL_SYNC"
+	fi
+
 	echo $P4PASSWD|p4 -u $P4USER -p $P4PORT login
-	time p4 -u $P4USER -p $P4PORT -c $P4CLIENT -Zproxyload sync
+	echo "p4 -u $P4USER -p $P4PORT -c $P4CLIENT -Zproxyload sync $EXTRA_ARGS"
+	time p4 -u $P4USER -p $P4PORT -c $P4CLIENT -Zproxyload sync $EXTRA_ARGS
+
 
 ) 200>/tmp/.cache_populate.lock

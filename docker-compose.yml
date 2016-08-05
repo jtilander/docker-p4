@@ -18,20 +18,26 @@ server:
     - "/mnt/datavolumes/perforce-server/library:/library"
   ports:
     - "1666:1666"
+  log_opt:
+    max-size: "50m"
+    max-file: "5"
 
 fusion:
-   build: git-fusion
-   restart: always
-   hostname: p4git
-   environment:
-     - "P4PORT=server:1666"
-     - "P4USER=p4admin"
-   ports:
-     - "2222:22"
-   volumes:
-     - "/mnt/datavolumes/git-fusion:/data"
-   links:
-     - server
+  build: git-fusion
+  restart: always
+  hostname: p4git
+  environment:
+    - "P4PORT=server:1666"
+    - "P4USER=p4admin"
+  ports:
+    - "2222:22"
+  volumes:
+    - "/mnt/datavolumes/git-fusion:/data"
+  links:
+    - server
+  log_opt:
+    max-size: "50m"
+    max-file: "5"
 
 proxy:
   build: proxy
@@ -44,9 +50,13 @@ proxy:
      - "P4CLIENT=proxy_populate_ws"
      - "CACHE_MAX_SIZE_MB=16"
      - "CACHE_MAX_EMPTY_MB=0"
+     - "PARALLEL_SYNC=4"
   ports:
     - "1667:1666"
   volumes:
      - "/mnt/datavolumes/perforce-proxy:/data"
   links:
      - server
+  log_opt:
+    max-size: "50m"
+    max-file: "5"
