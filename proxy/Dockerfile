@@ -49,7 +49,4 @@ RUN mkdir -p /etc/service/p4p
 ADD run-p4p.sh /etc/service/p4p/run
 
 RUN echo "*/10 * * * * root bash -l -c /usr/local/bin/cache_clean.sh" > /etc/cron.d/perforce-proxy-clean
-RUN echo "" >> /etc/cron.d/perforce-proxy-clean
-
 RUN echo "*/5 * * * * root bash -l -c /usr/local/bin/cache_populate.sh" > /etc/cron.d/perforce-proxy-populate
-RUN echo "" >> /etc/cron.d/perforce-proxy-populate
