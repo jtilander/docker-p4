@@ -1,62 +1,87 @@
-#
-# This is a sample docker compose file to bring up a perforce stack
-#
-server:
-  build: server
-  restart: always
-  hostname: p4server
-  environment:
-    - "P4PORT=1666"
-    - "CASE_INSENSITIVE=1"
-    - "ENABLE_AUTOCHECKPOINTS=1"
-    - "LDAPSERVER=${LDAPSERVER}"
-    - "LDAPBINDUSER=${LDAPBINDUSER}"
-    - "LDAPBINDPASSWD=${LDAPBINDPASSWD}"
-    - "LDAPSEARCHBASE=${LDAPSEARCHBASE}"
-  volumes:
-    - "/mnt/datavolumes/perforce-server/data:/data"
-    - "/mnt/datavolumes/perforce-server/library:/library"
-  ports:
-    - "1666:1666"
-  log_opt:
-    max-size: "50m"
-    max-file: "5"
+version: '2'
+services:
+  server:
+    image: ${DOCKER_REPO}/p4-server
+    restart: always
+    hostname: p4server
+    environment:
+      - "P4PORT=1666"
+      - "CASE_INSENSITIVE=1"
+      - "ENABLE_AUTOCHECKPOINTS=1"
+      - "LDAPNAME=${LDAPNAME}"
+      - "LDAPSERVER=${LDAPSERVER}"
+      - "LDAPBINDUSER=${LDAPBINDUSER}"
+      - "LDAPBINDPASSWD=${LDAPBINDPASSWD}"
+      - "LDAPSEARCHBASE=${LDAPSEARCHBASE}"
+      - "USE_GIT_FUSION=${USE_GIT_FUSION}"
+    volumes:
+      - "serverdata:/data"
+      - "serverlibrary:/library"
+    ports:
+      - "1666:1666"
+    networks:
+      perforce0:
+        ipv4_address: 172.28.0.200
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "5"
 
-fusion:
-  build: git-fusion
-  restart: always
-  hostname: p4git
-  environment:
-    - "P4PORT=server:1666"
-    - "P4USER=p4admin"
-  ports:
-    - "2222:22"
-  volumes:
-    - "/mnt/datavolumes/git-fusion:/data"
-  links:
-    - server
-  log_opt:
-    max-size: "50m"
-    max-file: "5"
+  fusion:
+    image: ${DOCKER_REPO}/p4-git-fusion
+    restart: always
+    hostname: p4git
+    environment:
+      - "P4PORT=server:1666"
+      - "P4USER=p4admin"
+    ports:
+      - "2222:22"
+    networks:
+      perforce0:
+        ipv4_address: 172.28.0.201
+    volumes:
+      - "fusiondata:/data"
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "5"
 
-proxy:
-  build: proxy
-  restart: always
-  hostname: p4proxy
-  environment:
-     - "P4TARGET=server:1666"
-     - "P4USER=p4admin"
-     - "P4PASSWD=DhP5rYyBgz"
-     - "P4CLIENT=proxy_populate_ws"
-     - "CACHE_MAX_SIZE_MB=16"
-     - "CACHE_MAX_EMPTY_MB=0"
-     - "PARALLEL_SYNC=4"
-  ports:
-    - "1667:1666"
-  volumes:
-     - "/mnt/datavolumes/perforce-proxy:/data"
-  links:
-     - server
-  log_opt:
-    max-size: "50m"
-    max-file: "5"
+  proxy:
+    image: ${DOCKER_REPO}/p4-proxy
+    restart: always
+    hostname: p4proxy
+    environment:
+       - "P4TARGET=server:1666"
+       - "P4USER=p4admin"
+       - "P4PASSWD=DhP5rYyBgz"
+       - "P4CLIENT=proxy_populate_ws"
+       - "CACHE_MAX_SIZE_MB=16"
+       - "CACHE_MAX_EMPTY_MB=0"
+       - "PARALLEL_SYNC=4"
+    ports:
+      - "1667:1666"
+    networks:
+      perforce0:
+        ipv4_address: 172.28.0.202
+    volumes:
+       - "proxydata:/data"
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+
+volumes:
+  serverdata:
+  serverlibrary:
+  fusiondata:
+  proxydata:
+
+
+networks:
+  perforce0:
+    ipam:
+      config:
+        - subnet: '172.28.0.0/16'
+          ip_range: '172.28.0.0/16'
+          gateway: '172.28.5.1'

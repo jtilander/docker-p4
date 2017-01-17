@@ -8,15 +8,17 @@ export LDAPSEARCHBASE ?=
 DOCKER_REPO ?= jtilander
 DC=docker-compose
 
-.PHONY: iterate clean all kill build log up image
+.PHONY: iterate hotreload clean all kill build log up image
 
 iterate: kill build up log
 
-build:
-	$(DC) build
+hotreload: image up log
 
 kill:
 	$(DC) stop && $(DC) rm -f
+
+clean:
+	$(DC) down -v
 
 up:
 	$(DC) up -d
@@ -24,13 +26,10 @@ up:
 log:
 	$(DC) logs -f
 
-
-
-
 image:
-	docker build -t $(DOCKER_REPO)/p4-server server
-	docker build -t $(DOCKER_REPO)/p4-git-fusion git-fusion
-	docker build -t $(DOCKER_REPO)/p4-proxy proxy
+	$(MAKE) -C server image
+	$(MAKE) -C proxy image
+	$(MAKE) -C git-fusion image
 
 serverup: networkup
 	docker run -d --name p4-server --hostname p4server --net=perforce0 --ip 172.28.0.200 \
@@ -46,7 +45,7 @@ serverup: networkup
 	-p 1666:1666 \
 	-v /mnt/datavolumes/perforce-server/data:/data \
 	-v /mnt/datavolumes/perforce-server/library:/library \
-	jtilander/p4-server && docker logs -f p4-server
+	${DOCKER_REPO}/p4-server && docker logs -f p4-server
 
 serverdown:
 	docker stop p4-server && docker rm -f p4-server
@@ -65,7 +64,7 @@ fusionup: networkup
 		--log-opt max-file=5 \
 		-p 2222:22 \
 		-v /mnt/datavolumes/perforce-git:/data \
-		jtilander/p4-git-fusion && docker logs -f p4-git
+		${DOCKER_REPO}/p4-git-fusion && docker logs -f p4-git
 
 fusiondown:
 	docker stop p4-git && docker rm -f p4-git
@@ -81,13 +80,12 @@ proxyup: networkup
 		--log-opt max-file=5 \
 		-p 1667:1666 \
 		-v /mnt/datavolumes/perforce-proxy:/data \
-		jtilander/p4-proxy && docker logs -f p4-proxy
+		${DOCKER_REPO}/p4-proxy && docker logs -f p4-proxy
 
 proxydown:
 	docker stop p4-proxy && docker rm -f p4-proxy
 
 neat: serverdown networkdown
-
 
 
 # In case you have a mac and vmware and want to setup your initial environment

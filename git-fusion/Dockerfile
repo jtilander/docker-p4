@@ -1,7 +1,7 @@
 FROM phusion/baseimage:0.9.18
 MAINTAINER Jim Tilander <jim@tilander.org>
 
-ENV FUSION_VERSION 2016.2-1398420~trusty
+ENV FUSION_VERSION 2016.3-1472473~trusty
 
 # Use the base image's standard init process
 CMD ["/sbin/my_init"]
@@ -19,7 +19,12 @@ RUN apt-get update
 
 RUN apt-cache policy helix-git-fusion
 
-RUN apt-get install -yq --no-install-recommends -q helix-cli helix-git-fusion=$FUSION_VERSION helix-git-fusion-3rdparty-git helix-git-fusion-trigger helix-p4dctl
+RUN apt-get install -yq --no-install-recommends -q \
+	helix-cli \
+	helix-git-fusion-3rdparty-git \
+	helix-git-fusion-trigger \
+	helix-git-fusion=$FUSION_VERSION \
+	helix-p4dctl
 
 # Cleanup APT when we are done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

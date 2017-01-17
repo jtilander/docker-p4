@@ -1,7 +1,7 @@
 FROM phusion/baseimage:0.9.18
 MAINTAINER Jim Tilander <jim@tilander.org>
 
-ENV P4D_VERSION 2016.1-1411799~trusty
+ENV P4D_VERSION 2016.2-1468155~trusty
 
 # Use the base image's standard init process
 CMD ["/sbin/my_init"]
@@ -19,7 +19,11 @@ RUN apt-get update
 
 RUN apt-cache policy helix-p4d
 
-RUN apt-get install -yq --no-install-recommends -q helix-cli helix-p4d=$P4D_VERSION helix-p4dctl helix-git-fusion-trigger
+RUN apt-get install -yq --no-install-recommends -q \
+	helix-cli \
+	helix-git-fusion-trigger \
+	helix-p4d=$P4D_VERSION \
+	helix-p4dctl
 
 # Cleanup APT when we are done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
