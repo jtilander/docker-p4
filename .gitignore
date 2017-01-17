@@ -1,4 +1,5 @@
 docker-p4.sublime-workspace
 workbench.cmd
+.env
 git-fusion/configure-git-fusion.sh.test
 git-fusion/configure-git-fusion.sh.test.orig
