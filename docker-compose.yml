@@ -15,16 +15,17 @@ services:
       - "LDAPSEARCHBASE=${LDAPSEARCHBASE}"
       - "USE_GIT_FUSION=${USE_GIT_FUSION}"
     volumes:
-      - "/mnt/datavolumes/perforce-server/data:/data"
-      - "/mnt/datavolumes/perforce-server/library:/library"
+      - "serverdata:/data"
+      - "serverlibrary:/library"
     ports:
       - "1666:1666"
     networks:
       perforce0:
         ipv4_address: 172.28.0.200
-    log_opt:
-      max-size: "50m"
-      max-file: "5"
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "5"
 
   fusion:
     image: ${DOCKER_REPO}/p4-git-fusion
@@ -39,10 +40,11 @@ services:
       perforce0:
         ipv4_address: 172.28.0.201
     volumes:
-      - "/mnt/datavolumes/git-fusion:/data"
-    log_opt:
-      max-size: "50m"
-      max-file: "5"
+      - "fusiondata:/data"
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "5"
 
   proxy:
     image: ${DOCKER_REPO}/p4-proxy
@@ -62,10 +64,19 @@ services:
       perforce0:
         ipv4_address: 172.28.0.202
     volumes:
-       - "/mnt/datavolumes/perforce-proxy:/data"
-    log_opt:
-      max-size: "50m"
-      max-file: "5"
+       - "proxydata:/data"
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+
+volumes:
+  serverdata:
+  serverlibrary:
+  fusiondata:
+  proxydata:
+
 
 networks:
   perforce0:
