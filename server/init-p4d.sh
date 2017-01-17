@@ -64,8 +64,8 @@ fi
 
 # Create a link to the depot library files so that we can separate db and library files onto
 # different volumes.
-if [ ! -L $P4ROOT/depot ];
-    then ln -s ../../library/depot $P4ROOT/depot
+if [ ! -L $P4ROOT/depot ]; then
+    ln -s ../../library/depot $P4ROOT/depot
 fi
 mkdir -p $P4ROOT/../../library/depot
 
