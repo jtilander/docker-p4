@@ -46,7 +46,7 @@ serverup: networkup
 	-p 1666:1666 \
 	-v /mnt/datavolumes/perforce-server/data:/data \
 	-v /mnt/datavolumes/perforce-server/library:/library \
-	jtilander/p4-server && docker logs -f p4-server
+	${DOCKER_REPO}/p4-server && docker logs -f p4-server
 
 serverdown:
 	docker stop p4-server && docker rm -f p4-server
@@ -65,7 +65,7 @@ fusionup: networkup
 		--log-opt max-file=5 \
 		-p 2222:22 \
 		-v /mnt/datavolumes/perforce-git:/data \
-		jtilander/p4-git-fusion && docker logs -f p4-git
+		${DOCKER_REPO}/p4-git-fusion && docker logs -f p4-git
 
 fusiondown:
 	docker stop p4-git && docker rm -f p4-git
@@ -81,7 +81,7 @@ proxyup: networkup
 		--log-opt max-file=5 \
 		-p 1667:1666 \
 		-v /mnt/datavolumes/perforce-proxy:/data \
-		jtilander/p4-proxy && docker logs -f p4-proxy
+		${DOCKER_REPO}/p4-proxy && docker logs -f p4-proxy
 
 proxydown:
 	docker stop p4-proxy && docker rm -f p4-proxy
