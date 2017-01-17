@@ -24,70 +24,31 @@ up:
 log:
 	$(DC) logs -f
 
-
-
-
 image:
-	docker build -t $(DOCKER_REPO)/p4-server server
-	docker build -t $(DOCKER_REPO)/p4-git-fusion git-fusion
-	docker build -t $(DOCKER_REPO)/p4-proxy proxy
+	$(MAKE) -C server image
+	$(MAKE) -C proxy image
+	$(MAKE) -C git-fusion image
 
-serverup: networkup
-	docker run -d --name p4-server --hostname p4server --net=perforce0 --ip 172.28.0.200 \
-	-e "P4PASSWD=${P4PASSWD}" \
-	-e "LDAPNAME=${LDAPNAME}" \
-	-e "LDAPSERVER=${LDAPSERVER}" \
-	-e "LDAPBINDUSER=${LDAPBINDUSER}" \
-	-e "LDAPBINDPASSWD=${LDAPBINDPASSWD}" \
-	-e "LDAPSEARCHBASE=${LDAPSEARCHBASE}" \
-	-e "USE_GIT_FUSION=${USE_GIT_FUSION}" \
-	--log-opt max-size=50m \
-	--log-opt max-file=5 \
-	-p 1666:1666 \
-	-v /mnt/datavolumes/perforce-server/data:/data \
-	-v /mnt/datavolumes/perforce-server/library:/library \
-	${DOCKER_REPO}/p4-server && docker logs -f p4-server
+serverup:
+	$(DC) up server && $(DC) logs -f server
 
 serverdown:
-	docker stop p4-server && docker rm -f p4-server
+	$(DC) stop server
 
-networkup:
-	docker network inspect perforce0 > /dev/null 2>&1 || docker network create --driver=bridge --subnet=172.28.0.0/16 --ip-range=172.28.0.0/16 --gateway=172.28.5.1 perforce0
-
-networkdown:
-	docker network rm perforce0
-
-fusionup: networkup
-	docker run -d --name p4-git --hostname p4git --net=perforce0 --ip 172.28.0.201 \
-		-e "P4PASSWD=${P4PASSWD}" \
-		-e "P4PORT=${P4PORT}" \
-		--log-opt max-size=50m \
-		--log-opt max-file=5 \
-		-p 2222:22 \
-		-v /mnt/datavolumes/perforce-git:/data \
-		${DOCKER_REPO}/p4-git-fusion && docker logs -f p4-git
+fusionup:
+	$(DC) up fusion
 
 fusiondown:
-	docker stop p4-git && docker rm -f p4-git
+	$(DC) down fusion
 
-proxyup: networkup
-	docker run -d --name p4-proxy --hostname p4proxy --net=perforce0 --ip 172.28.0.202 \
-		-e "P4PASSWD=${P4PASSWD}" \
-		-e "P4TARGET=${P4TARGET}" \
-		-e "P4CLIENT=${P4CLIENT}" \
-		-e "CACHE_MAX_SIZE_MB=${CACHE_MAX_SIZE_MB}" \
-		-e "CACHE_MAX_EMPTY_MB=${CACHE_MAX_EMPTY_MB}" \
-		--log-opt max-size=50m \
-		--log-opt max-file=5 \
-		-p 1667:1666 \
-		-v /mnt/datavolumes/perforce-proxy:/data \
-		${DOCKER_REPO}/p4-proxy && docker logs -f p4-proxy
+proxyup:
+	$(DC) up proxy && $(DC) logs -f proxy
 
 proxydown:
-	docker stop p4-proxy && docker rm -f p4-proxy
+	$(DC) stop proxy
 
-neat: serverdown networkdown
-
+neat:
+	$(DC) down
 
 
 # In case you have a mac and vmware and want to setup your initial environment
