@@ -1,7 +1,7 @@
 FROM phusion/baseimage:0.9.18
 MAINTAINER Jim Tilander <jim@tilander.org>
 
-ENV P4P_VERSION 15.2
+ENV P4P_VERSION 16.3
 
 # Use the base image's standard init process
 CMD ["/sbin/my_init"]
