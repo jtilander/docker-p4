@@ -8,15 +8,17 @@ export LDAPSEARCHBASE ?=
 DOCKER_REPO ?= jtilander
 DC=docker-compose
 
-.PHONY: iterate clean all kill build log up image
+.PHONY: iterate hotreload clean all kill build log up image
 
 iterate: kill build up log
 
-build:
-	$(DC) build
+hotreload: image up log
 
 kill:
 	$(DC) stop && $(DC) rm -f
+
+clean:
+	$(DC) down -v
 
 up:
 	$(DC) up -d
