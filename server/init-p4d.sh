@@ -71,7 +71,7 @@ split_lib_and_db() {
 }
 
 create_git_fusion_trigger() {
-    P4=$1
+    local P4=$1
     echo "Waiting for the git fusion server to initialize..."
     while [ `$P4 users | grep git-fusion-user | wc -l` -lt 1 ]; do
         echo "Waiting for git fusion..."
