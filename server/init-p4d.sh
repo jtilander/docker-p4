@@ -101,6 +101,8 @@ initialize_commit_server() {
 
     local NAME=$1
 
+    split_lib_and_db
+
     /opt/perforce/sbin/configure-helix-p4d.sh $NAME -n -p $P4PORT -r $P4ROOT -u $P4USER -P $P4PASSWD --case $CASE_INSENSITIVE
     p4dctl start -t p4d $NAME
 
@@ -186,6 +188,8 @@ initialize_commit_server() {
     # Ensure that we have a .p4tickets file if someone wants to debug the server itself.
     echo $P4PASSWD|$P4 login
 
+    create_login_ticket
+
     p4dctl stop -t p4d $NAME
 
     touch $P4ROOT/.initialized
@@ -197,11 +201,6 @@ enable_checkpoints
 fix_permissions
 print_network_info
 
-if [ -f $P4ROOT/.initialized ]; then
-    create_login_ticket
-    echo "p4d has already been initialized, init complete."
-    exit 0        
-else
-    split_lib_and_db
+if [ ! -f $P4ROOT/.initialized ]; then
     initialize_commit_server ${NAME:-$HOSTNAME}
 fi
