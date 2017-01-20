@@ -1,7 +1,7 @@
 FROM phusion/baseimage:0.9.18
 MAINTAINER Jim Tilander <jim@tilander.org>
 
-ENV P4D_VERSION 2016.2-1468155~trusty
+ARG P4D_VERSION=2016.2-1468155~trusty
 
 # Use the base image's standard init process
 CMD ["/sbin/my_init"]

@@ -8,6 +8,10 @@ export LDAPSEARCHBASE ?=
 DOCKER_REPO ?= jtilander
 DC=docker-compose
 
+P4D_VERSION=2016.2-1468155~trusty
+P4P_VERSION=16.2
+GF_VERSION=2016.2-1398420~trusty
+
 .PHONY: iterate hotreload clean all kill build log up image
 
 iterate: kill build up log

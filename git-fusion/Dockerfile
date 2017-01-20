@@ -1,7 +1,7 @@
 FROM phusion/baseimage:0.9.18
 MAINTAINER Jim Tilander <jim@tilander.org>
 
-ENV FUSION_VERSION 2016.2-1398420~trusty
+ARG GF_VERSION=2016.2-1398420~trusty
 
 # Use the base image's standard init process
 CMD ["/sbin/my_init"]
@@ -21,9 +21,9 @@ RUN apt-cache policy helix-git-fusion
 
 RUN apt-get install -yq --no-install-recommends -q \
 	helix-cli \
-	helix-git-fusion-base=$FUSION_VERSION \
-	helix-git-fusion-trigger=$FUSION_VERSION \
-	helix-git-fusion=$FUSION_VERSION \
+	helix-git-fusion-base=$GF_VERSION \
+	helix-git-fusion-trigger=$GF_VERSION \
+	helix-git-fusion=$GF_VERSION \
 	helix-p4dctl
 
 # Cleanup APT when we are done.
