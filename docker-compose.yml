@@ -1,7 +1,7 @@
 version: '2'
 services:
   server:
-    image: ${DOCKER_REPO}/p4-server
+    image: ${DOCKER_REPO}/p4-server:${TAG}
     restart: always
     hostname: p4server
     environment:
@@ -28,7 +28,7 @@ services:
         max-file: "5"
 
   fusion:
-    image: ${DOCKER_REPO}/p4-git-fusion
+    image: ${DOCKER_REPO}/p4-git-fusion:${TAG}
     restart: always
     hostname: p4git
     environment:
@@ -47,7 +47,7 @@ services:
         max-file: "5"
 
   proxy:
-    image: ${DOCKER_REPO}/p4-proxy
+    image: ${DOCKER_REPO}/p4-proxy:${TAG}
     restart: always
     hostname: p4proxy
     environment:
