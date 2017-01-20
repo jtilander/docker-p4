@@ -151,7 +151,10 @@ $P4 configure set security=3
 # Install git-fusion trigger support, but make sure that we do this after the fusion server has initialized.
 if [ "$USE_GIT_FUSION" -eq "1" ]; then
     echo "Waiting for the git fusion server to initialize..."
-    sleep 10
+    while [ `$P4 users | grep git-fusion-user | wc -l` -lt 1 ]; do 
+        echo "Waiting for git fusion..." 
+        sleep 5 
+    done
     echo "Installing support for git fusion triggers"
 
     if [ ! -d /data/gf-libexec ]; then
