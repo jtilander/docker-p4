@@ -2,9 +2,14 @@
 
 DOCKER_REPO ?= jtilander
 GF_VERSION ?= 2016.2-1398420~trusty
+TAG ?= test
 
 image:
-	docker build -t $(DOCKER_REPO)/p4-git-fusion --build-arg GF_VERSION=$(GF_VERSION) .
+	docker build -t $(DOCKER_REPO)/p4-git-fusion:$(TAG) --build-arg GF_VERSION=$(GF_VERSION) .
+
+push:
+	docker push $(DOCKER_REPO)/p4-git-fusion:$(TAG)
+
 
 diff:
 	diff -u configure-git-fusion.sh.orig configure-git-fusion.sh > configure-git-fusion.sh.patch || true

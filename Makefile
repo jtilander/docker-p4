@@ -5,12 +5,13 @@ export LDAPBINDUSER ?=
 export LDAPBINDPASSWD ?= 
 export LDAPSEARCHBASE ?= 
 
-DOCKER_REPO ?= jtilander
-DC=docker-compose
+export DOCKER_REPO ?= ct-registry.activision.com/perforce
+export TAG ?= test
+export P4D_VERSION=2016.2-1468155~trusty
+export P4P_VERSION=16.2
+export GF_VERSION=2016.2-1398420~trusty
 
-P4D_VERSION=2016.2-1468155~trusty
-P4P_VERSION=16.2
-GF_VERSION=2016.2-1398420~trusty
+DC=docker-compose
 
 .PHONY: iterate hotreload clean all kill build log up image
 
@@ -34,6 +35,14 @@ image:
 	$(MAKE) -C server image
 	$(MAKE) -C proxy image
 	$(MAKE) -C git-fusion image
+
+login:
+	docker login -u $(REG_USERNAME) -p $(REG_PASSWORD) ct-registry.activision.com
+
+push:
+	$(MAKE) -C server push
+	$(MAKE) -C proxy push
+	$(MAKE) -C git-fusion push
 
 serverup: networkup
 	docker run -d --name p4-server --hostname p4server --net=perforce0 --ip 172.28.0.200 \
@@ -98,3 +107,9 @@ provisionmac:
 	brew install docker-compose
 	-docker-machine rm -f dockervm
 	docker-machine create -d vmwarefusion --vmwarefusion-cpu-count 2 --vmwarefusion-memory-size 2048 dockervm
+
+jenkins_test: image
+
+jenkins_test_integration: jenkins_test
+
+jenkins_publish: image login push
