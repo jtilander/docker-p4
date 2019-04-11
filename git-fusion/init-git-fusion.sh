@@ -73,7 +73,7 @@ cp /etc/ssh/ssh_host* /data/sshkeys/
 echo "Waiting for the perforce server to come up..."
 sleep 3
 
-P4TICKET=`echo "$P4PASSWD"|/usr/bin/p4 login -a -p|sed -r -e "s/Enter password://g"`
+P4TICKET=`echo "$P4PASSWD"|/usr/bin/p4 login -a -p $P4USER|sed -r -e "s/Enter password://g"`
 echo $P4TICKET
 P4="/usr/bin/p4 -u $P4USER -p $P4PORT -P $P4TICKET"
 
