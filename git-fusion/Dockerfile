@@ -11,6 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 RUN apt-get install -yq --no-install-recommends -q wget python openssh-server patch
+RUN apt-get install -yq --no-install-recommends -q iproute2 net-tools
 
 # Add official perforce packages
 RUN wget -qO - https://package.perforce.com/perforce.pubkey | apt-key add -
