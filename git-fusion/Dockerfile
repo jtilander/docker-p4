@@ -1,7 +1,7 @@
-FROM phusion/baseimage:0.9.18
+FROM phusion/baseimage:0.10.2
 MAINTAINER Jim Tilander <jim@tilander.org>
 
-ENV FUSION_VERSION 2017.2-1590471~trusty
+ENV FUSION_VERSION 2017.2-1590471~xenial
 
 # Use the base image's standard init process
 CMD ["/sbin/my_init"]
@@ -14,7 +14,7 @@ RUN apt-get install -yq --no-install-recommends -q wget python openssh-server pa
 
 # Add official perforce packages
 RUN wget -qO - https://package.perforce.com/perforce.pubkey | apt-key add -
-RUN echo 'deb http://package.perforce.com/apt/ubuntu trusty release' > /etc/apt/sources.list.d/perforce.list
+RUN echo 'deb http://package.perforce.com/apt/ubuntu xenial release' > /etc/apt/sources.list.d/perforce.list
 RUN apt-get update
 
 RUN apt-cache policy helix-git-fusion
