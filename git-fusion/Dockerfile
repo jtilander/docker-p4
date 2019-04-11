@@ -1,7 +1,7 @@
 FROM phusion/baseimage:0.9.18
 MAINTAINER Jim Tilander <jim@tilander.org>
 
-ENV FUSION_VERSION 2017.1-1484925~trust
+ENV FUSION_VERSION 2017.2-1590471~trusty
 
 # Use the base image's standard init process
 CMD ["/sbin/my_init"]
