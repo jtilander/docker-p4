@@ -35,6 +35,7 @@ ENV P4CLIENT=p4p_populate_ws
 ENV CACHE_MAX_SIZE_MB=1048576
 ENV CACHE_MAX_EMPTY_MB=51200
 ENV PARALLEL_SYNC=
+ENV P4TRUST=/data/.p4trust
 
 ADD cache_* /usr/local/bin/
 RUN chmod a+x /usr/local/bin/cache_*
