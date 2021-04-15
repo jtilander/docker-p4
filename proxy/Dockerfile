@@ -48,5 +48,5 @@ ADD init-p4p.sh /etc/my_init.d/p4p.sh
 RUN mkdir -p /etc/service/p4p
 ADD run-p4p.sh /etc/service/p4p/run
 
-RUN echo "*/10 * * * * root bash -l -c /usr/local/bin/cache_clean.sh" > /etc/cron.d/perforce-proxy-clean
-RUN echo "*/5 * * * * root bash -l -c /usr/local/bin/cache_populate.sh" > /etc/cron.d/perforce-proxy-populate
+RUN echo "*/10 * * * * root /usr/bin/flock -n /tmp/cache_clean.lockfile bash -l -c /usr/local/bin/cache_clean.sh" > /etc/cron.d/perforce-proxy-clean
+RUN echo "*/5 * * * * root /usr/bin/flock -n /tmp/cache_populate.lockfile bash -l -c /usr/local/bin/cache_populate.sh" > /etc/cron.d/perforce-proxy-populate
