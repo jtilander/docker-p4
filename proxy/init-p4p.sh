@@ -15,4 +15,8 @@ mkdir -p $P4CACHE
 mkdir -p /data/client
 mkdir -p /data/scripts
 
+if [ ! -f /data/.p4trust ]; then
+	p4 -p $P4TARGET trust -y
+fi
+
 touch /data/.initialized
