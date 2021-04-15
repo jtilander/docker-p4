@@ -1,7 +1,7 @@
 FROM phusion/baseimage:0.9.18
 MAINTAINER Jim Tilander <jim@tilander.org>
 
-ENV P4P_VERSION 15.2
+ENV P4P_VERSION 20.1
 
 # Use the base image's standard init process
 CMD ["/sbin/my_init"]
@@ -22,7 +22,7 @@ RUN apt-get install -yq --no-install-recommends -q helix-cli
 # Cleanup APT when we are done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN curl -sSL -O http://cdist2.perforce.com/perforce/r${P4P_VERSION}/bin.linux26x86_64/p4p && mv p4p /usr/bin/p4p && chmod +x /usr/bin/p4p
+RUN curl -f -sSL -O http://cdist2.perforce.com/perforce/r${P4P_VERSION}/bin.linux26x86_64/p4p && mv p4p /usr/bin/p4p && chmod +x /usr/bin/p4p
 
 # Environment configurations
 ENV P4CONFIG=.p4config
